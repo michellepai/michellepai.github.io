@@ -1,0 +1,334 @@
+<section id="quickstart" class="level-1">
+    <header>API Quick Start</header>
+    <section id="quickstart-step1" class="level-2">
+        <img align="left" src="images/imgLrnCntrNum1.gif" style="padding-right: 10px" width="30px" height="30px">
+        <header>Join Us and Get Your Application Key &amp; Secret</header>
+
+        <p>The first step in working with AT&amp;T APIs is to create a developer account or Sign-In to the <a href="https://developer.att.com/developer/mvc/auth/login?destPage=%2F">AT&amp;T Developer Portal</a>.</p> 
+        <p>Click on “My Apps” and Setup new application by providing Application Name and choose In-App Messaging APIs "In-App Messaging-IMMN” or/and "In-App Messaging-MIM" as well as other scopes and submit to get application credentials.</p>
+    </section>
+    <section id="quickstart-step2" class="level-2">
+        <img align="left" src="images/imgLrnCntrNum2.gif" style="padding-right: 10px" width="30px" height="30px">
+        <header>Get an Access Token</header>
+        <p class="sectionContent">AT&amp;T API uses the OAuth 2.0 protocol for authentication and authorization. Obtain your AccessToken using the below <a href="" target="_blank">Code snippets</a>.</p>
+
+
+<!-- On the diagram you can do:
+     3 different classes for the arrow position: 
+        left-half: Represent from user to DHS or DHS to user.
+        full: Represent from user to Gateway or Gateway to user. 
+        right half: Represent from DHS to Gateway or Gateway to DHS. 
+    2 classes for arrow direction:
+        right-arrow: request.
+        left-arrow: response. -->
+        <div id="oauth-workflow" class="call-flow-container">
+            <div class="img-table">
+                <div class="cf-row-img">       
+                    <div class="cf-img cf-left">Subscriber</div>  
+                    <div class="cf-img cf-center">Developer-Hosted Server</div>  
+                    <div class="cf-img cf-right">AT&amp;T Gateway</div> 
+                </div>
+            </div>
+            <ul>
+                <li class="right-half right-arrow">
+                    <div class="cf-description"><p>Request subscriber authorization</p></div>
+                    <div class="arrow"></div>
+                    <div class="cf-sub-description red-left"><p>Step 1 begins</p></div>
+                </li>
+                <li class="full left-arrow">
+                    <div class="cf-description"><p>Redirect to subsciber </p></div>
+                    <div class="arrow"></div>
+                    <div class="cf-sub-description green-right"><p>Response - HTTP 302</div>
+                </li>
+                <li class="full right-arrow">
+                    <div class="cf-description"><p>Subscriber provides consent</p></div>
+                    <div class="arrow"></div>
+                    <div class="cf-sub-description red-left"><p>Username &amp; password or SMS to short code </p></div>
+                </li>   
+                <li class="right-half left-arrow">
+                    <div class="cf-description"><p>Return authorization code</p></div>
+                    <div class="arrow"></div>
+                    <div class="cf-sub-description green-right"><p>Response - HTTP 302 </p></div>
+                </li>
+                <li class="right-half right-arrow">
+                    <div class="cf-description"><p>Exchange code to get access token</p></div>
+                    <div class="arrow"></div>
+                    <div class="cf-sub-description red-left"><p>Step 2 begins</p></div>
+                </li>
+                <li class="right-half left-arrow">
+                    <div class="cf-description"><p>Return AccessToken </p></div>
+                    <div class="arrow"></div>
+                    <div class="cf-sub-description green-right"><p>Response - HTTP 200</p></div>
+                </li>                           
+            </ul>
+        </div>
+
+        <div class="tabs ui-tabs ui-widget ui-widget-content ui-corner-all">
+            <ul class="tab_nav ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist">
+                <li class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="curl" aria-labelledby="ui-id-69" aria-selected="true">
+                    <a href="#curl" class="selected ui-tabs-anchor" role="presentation" tabindex="-1" id="no-responsive-tag-quickstart_1_Ruby ui-id-69"><abbr>cURL</abbr></a>
+                </li>
+                <li class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="csharp" aria-labelledby="ui-id-69" aria-selected="false">
+                    <a href="#csharp" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="no-responsive-tag-quickstart_1_Ruby ui-id-69"><abbr>C#</abbr></a>
+                </li>
+            </ul>
+            <div class="tab_content">
+                <div id="curl" class="code ui-tabs-panel ui-widget-content ui-corner-bottom" aria-labelledby="ui-id-69" role="tabpanel" aria-expanded="true" aria-hidden="false">
+                    <section id="curl">
+<pre class="codeElement">
+<span class="Comment"># Step 1 : Request subscriber authorization : Get end user authorization code (auth code)</span>
+<a href="https://api.att.com/oauth/authorize?">https://api.att.com/oauth/authorize?</a><span class="Identifier">client_id</span>=<span class="Special">{</span>APP_KEY<span class="Special">}</span>&amp;<span class="Identifier">scope</span>=MIM,IMMN
+&amp;<span class="Identifier">redirect_uri</span>=<span class="Special">{</span>REDIRECT_URI<span class="Special">}</span>
+
+<span class="Comment"># 2: Exchange code to get access token : Get AccessToken based on oauthorization code</span>
+curl &quot;<span class="Constant"><a href="https://api.att.com/oauth/token">https://api.att.com/oauth/token</a></span>&quot; \
+--insecure \
+--header &quot;<span class="Constant">Content-Type: application/x-www-form-urlencoded</span>&quot; \
+--header &quot;<span class="Constant">Accept: application/json</span>&quot; \
+--data &quot;<span class="Constant">grant_type=authorization_code&amp;client_id={APP_KEY}&amp;client_secret={APP_SECRET}&amp;code={OAUTH_AUTHORIZATION_CODE}</span>&quot;
+</pre>
+              </section>                    
+                </div>
+                <div id="csharp" class="code ui-tabs-panel ui-widget-content ui-corner-bottom" aria-labelledby="ui-id-69" role="tabpanel" aria-expanded="true" aria-hidden="false">
+                    <section id="csharp">
+                        <pre class="codeElement">
+<span class="Comment">// Step 1 - Request Authentication : Code for OAuth - Get Access Token </span>
+<span class="Comment">// If there's no access token yet go through the consent flow. </span>
+
+<span class="Comment">// Enter the value from the 'App Key' field obtained at developer.att.com in your </span>
+<span class="Comment">// app account.</span>
+<span class="Type">string</span> apiKey = <span class="Constant">&quot;&quot;</span>;
+
+<span class="Comment">// Enter the value from the 'App Secret' field obtained at developer.att.com </span>
+<span class="Comment">// in your app account.</span>
+<span class="Type">string</span> secretKey = <span class="Constant">&quot;&quot;</span>;
+
+<span class="Comment">// Set the fully-qualified domain name to: <a href="https://api.att.com">https://api.att.com</a></span>
+<span class="Type">string</span> endPoint = <span class="Constant">&quot;<a href="https://api.att.com">https://api.att.com</a>&quot;</span>;
+
+<span class="Comment">// Set the redirect URI for returning after consent flow.</span>
+<span class="Type">string</span> authorizeRedirectUri = <span class="Constant">&quot;&quot;</span>;
+
+<span class="Comment">//Set the scope to MIM,IMMN</span>
+<span class="Type">string</span> scope = <span class="Constant">&quot;MIM,IMMN&quot;</span>;
+
+
+<span class="Statement">if</span> (Request[<span class="Constant">&quot;code&quot;</span>] == <span class="Constant">null</span>)
+{
+    <span class="Comment">// Authenticate the user. Note: This requires a Web browser.</span>
+    <span class="Comment">// Obtain the url string that is used for consent flow.</span>
+    <span class="Type">string</span> url = endPoint + <span class="Constant">&quot;/oauth/authorize?client_id=&quot;</span> + apiKey + <span class="Constant">&quot;&amp;scope=&quot;</span> + scope + <span class="Constant">&quot;&amp;redirect_uri=&quot;</span> + authorizeRedirectUri;
+    Response.Redirect(url);
+}
+<span class="Statement">else</span>
+{
+    <span class="Comment">// Get code in the query parameters after doing consent flow</span>
+    authCode = Request[<span class="Constant">&quot;code&quot;</span>].ToString();
+    var query = HttpUtility.ParseQueryString(String.Empty);
+
+    <span class="Type">string</span> oauthParameters = String.Empty;
+
+    query[<span class="Constant">&quot;grant_type&quot;</span>] = <span class="Constant">&quot;authorization_code&quot;</span>;
+    query[<span class="Constant">&quot;client_id&quot;</span>] = apiKey;
+    query[<span class="Constant">&quot;client_secret&quot;</span>] = secretKey;
+    query[<span class="Constant">&quot;code&quot;</span>] = authCode;
+
+    oauthParameters = query.ToString();
+
+    <span class="Statement">if</span> (!String.IsNullOrEmpty(oauthParameters))
+    {
+        <span class="Statement">try</span>
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(endPoint + <span class="Constant">&quot;/oauth/token&quot;</span>);
+
+            request.Accept = <span class="Constant">&quot;application/json&quot;</span>;
+            request.Method = <span class="Constant">&quot;POST&quot;</span>;
+            request.ContentType = <span class="Constant">&quot;application/x-www-form-urlencoded&quot;</span>;
+
+            UTF8Encoding encoding = <span class="Statement">new</span> UTF8Encoding();
+            <span class="Type">byte</span>[] binaryData = encoding.GetBytes(oauthParameters);
+
+            request.ContentLength = binaryData.Length;
+            Stream dataStream;
+            dataStream = request.GetRequestStream();
+            dataStream.Write(binaryData, <span class="Constant">0</span>, binaryData.Length);
+            dataStream.Close();
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+            <span class="Type">string</span> accessTokenResponse;
+            <span class="Statement">using</span> (StreamReader streamReader = <span class="Statement">new</span> StreamReader(response.GetResponseStream()))
+            {
+                accessTokenResponse = streamReader.ReadToEnd();
+                streamReader.Close();
+            }
+
+            var serializer = <span class="Statement">new</span> JavaScriptSerializer();
+            var accessToken = serializer.Deserialize&lt;AccessToken&gt;(accessTokenResponse);
+            <span class="Statement">return</span> accessToken.access_token;
+
+        }
+        <span class="Statement">catch</span> (Exception ex)
+        {
+            <span class="Type">string</span> error = ex.Message;
+        }
+    }
+}
+</pre>
+                    </section>                    
+                </div>
+            </div>
+        </div>
+        <p> For more information refer to <a href="https://http://developer.att.com/apis/oauth-2" target="_blank"> OAuth 2.0 API.</a></p>
+    </section>
+    <section id="quickstart-step3" class="level-2">
+        <img align="left" src="images/imgLrnCntrNum3.gif" style="padding-right: 10px" width="30px" height="30px">
+        <header>Make API Calls</header>
+        <div id="oauth-workflow" class="call-flow-container">
+            <div class="img-table">
+                <div class="cf-row-img">       
+                    <div class="cf-img cf-left">Subscriber</div>  
+                    <div class="cf-img cf-center">Developer-Hosted Server</div>  
+                    <div class="cf-img cf-right">AT&amp;T</div>                      
+                </div>
+            </div>
+            <ul>
+                <li class="full right-arrow">
+                    <div class="cf-description"><p>Request Access Token</p></div>
+                    <div class="arrow"></div>
+                    <div class="cf-sub-description red-left"><p>Step 1 begins</p></div>
+                </li>
+                <li class="right-half left-arrow">
+                    <div class="cf-description"><p>Return Access Token</p></div>
+                    <div class="arrow"></div>
+                    <div class="cf-sub-description green-right"><p>Response - HTTP 200 Ok</div>
+                </li>
+                <li class="right-half right-arrow">
+                    <div class="cf-description"><p>Request MessageInbox Status</p></div>
+                    <div class="arrow"></div>
+                    <div class="cf-sub-description red-left"><p>Step 2 begins</p></div>
+                </li>   
+                <li class="right-half left-arrow">
+                    <div class="cf-description"><p>Return MessageInbox Status</p></div>
+                    <div class="arrow"></div>
+                    <div class="cf-sub-description green-right"><p>Response - HTTP 204 </p></div>
+                </li>
+                <li class="full right-arrow">
+                    <div class="cf-description"><p>Send Message</p></div>
+                    <div class="arrow"></div>
+                    <div class="cf-sub-description red-left"><p>Step 3 begins</p></div>
+                </li>
+                <li class="right-half left-arrow">
+                    <div class="cf-description"><p>Return Message Id </p></div>
+                    <div class="arrow"></div>
+                    <div class="cf-sub-description green-right"><p>Response - HTTP 200 OK</p></div>
+                </li>                           
+            </ul>
+        </div>
+        <div class="tabs ui-tabs ui-widget ui-widget-content ui-corner-all">
+            <ul class="tab_nav ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist">
+                <li class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="curl" aria-labelledby="ui-id-69" aria-selected="true">
+                    <a href="#curl" class="selected ui-tabs-anchor" role="presentation" tabindex="-1" id="no-responsive-tag-quickstart_1_Ruby ui-id-69"><abbr>cURL</abbr></a>
+                </li>
+                <li class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="csharp" aria-labelledby="ui-id-69" aria-selected="false">
+                    <a href="#csharp" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="no-responsive-tag-quickstart_1_Ruby ui-id-69"><abbr>C#</abbr></a>
+                </li>
+            </ul>
+            <div class="tab_content">
+                <div id="curl" class="code ui-tabs-panel ui-widget-content ui-corner-bottom" aria-labelledby="ui-id-69" role="tabpanel" aria-expanded="true" aria-hidden="false">
+                    <section id="curl">
+                        <pre class="codeElement">
+<span class="Comment"># Step 1: Request Accesstoken : Refer OAuth section</span>
+
+<span class="Comment"># Step 2</span>: Request MessageInbox Status</span>
+curl &quot;<span class="Constant"><a href="https://api.att.com/myMessages/v2/messages/index/info">https://api.att.com/myMessages/v2/messages/index/info</a></span>&quot; \
+--header &quot;<span class="Constant">Authorization: Bearer {ACCESS_TOKEN}</span>&quot; \
+--header &quot;<span class="Constant">Accept: application/json</span>&quot; \
+--request GET
+
+<span class="Comment"># Step 3: Send a message to any phone number, shortcode and emails</span>
+curl &quot;<span class="Constant"><a href="https://api.att.com/rest/1/MyMessages">https://api.att.com/rest/1/MyMessages</a></span>&quot; \
+--header &quot;<span class="Constant">Content-Type: application/json</span>&quot; \
+--header &quot;<span class="Constant">Authorization: Bearer {ACCESS_TOKEN}}</span>&quot; \
+--header &quot;<span class="Constant">Accept: application/json</span>&quot; \
+--data $'<span class="Constant">{&quot;Addresses&quot;:[&quot;tel:1234567890&quot;],&quot;Text&quot;:&quot;IMMN Message&quot;,&quot;Subject&quot;:&quot;IMMN Subject&quot;}</span>' \
+--request POST
+</pre>
+                    </section>                    
+                </div>
+                <div id="csharp" class="code ui-tabs-panel ui-widget-content ui-corner-bottom" aria-labelledby="ui-id-69" role="tabpanel" aria-expanded="true" aria-hidden="false">
+                    <section id="csharp">
+                        <pre class="codeElement">
+<span class="Comment">// Step 1 - Request AccessToken : Code for OAuth - Get Access Token click here </span>
+
+<span class="Comment">// Step 2 - Request MessageInbox Status : Code to Validate Message Inbox Index </span>
+HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+request.Headers.Add(<span class="Constant">&quot;Authorization&quot;</span>, <span class="Constant">&quot;Bearer &quot;</span> + accessToken);
+request.Accept = accept;
+request.Method = <span class="Constant">&quot;GET&quot;</span>;
+
+HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+<span class="Type">string</span> responseData;
+<span class="Statement">using</span> (StreamReader streamReader = <span class="Statement">new</span> StreamReader(response.GetResponseStream()))
+{
+    responseData = streamReader.ReadToEnd();
+    streamReader.Close();
+}
+<span class="Comment">// parse responseData.</span>
+
+<span class="Comment">/* Step 3 - Send Message : Code to Send Message to a mobile number */</span>
+<span class="Comment">// Create an instance for JavaScriptSerializer.</span>
+var serializer = <span class="Statement">new</span> JavaScriptSerializer();
+
+<span class="Comment">// Send Message</span>
+<span class="Comment">// Create send message object to be converted to JSON</span>
+<span class="Type">string</span> address = <span class="Constant">&quot;tel:0000000000&quot;</span>; <span class="Comment">// e.g. tel:2060000000</span>
+<span class="Type">string</span> text = <span class="Constant">&quot;Send message test&quot;</span>;
+
+var addressesList = <span class="Statement">new</span> List&lt;<span class="Type">string</span>&gt;();
+addressesList.Add(address);
+
+var sendMsgObj = <span class="Statement">new</span> RootObject()
+{
+    messageRequest = <span class="Statement">new</span> MessageRequest()
+    {
+        addresses = addressesList,
+        text = text
+    }
+};
+
+<span class="Comment">//Convert Message request object to JSON</span>
+var sendMsgData = serializer.Serialize(sendMsgObj);
+
+<span class="Type">string</span> uri = endPoint + <span class="Constant">&quot;/myMessages/v2/messages&quot;</span>;
+
+HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+request.Headers.Add(<span class="Constant">&quot;Authorization&quot;</span>, <span class="Constant">&quot;Bearer &quot;</span> + accessToken);
+request.Accept = <span class="Constant">&quot;application/json&quot;</span>;
+request.Method = <span class="Constant">&quot;POST&quot;</span>;
+request.ContentType = <span class="Constant">&quot;application/json&quot;</span>;
+
+Stream dataStream;
+dataStream = request.GetRequestStream();
+
+UTF8Encoding encoding = <span class="Statement">new</span> UTF8Encoding();
+<span class="Type">byte</span>[] binaryData = encoding.GetBytes(data);
+dataStream.Write(binaryData, <span class="Constant">0</span>, binaryData.Length);
+dataStream.Close();
+<span class="Comment">// parse the response object - if required</span>
+</pre>
+                    </section>                    
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+</section>
+</section>
