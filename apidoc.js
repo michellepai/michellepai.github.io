@@ -32,7 +32,7 @@ $(function() {
         $(this).parents().find('ul:first a.selected').removeClass('selected');
         $(this).addClass('selected');
     });
-	if (window.location.hash) {
+    if (window.location.hash) {
         hash = window.location.hash;
         setTimeout(function() {
             $(window).scrollTop($(hash).offset().top - 170);
@@ -43,7 +43,6 @@ $(function() {
     $('.inner span.toggleMenu').click(function() {
         $('#toc').toggle();
     });
-
     function toc_scroll() {
         $('#toc').height($(window).height() - calculate_height() - 35);
         if($('#version').length===1) {
@@ -167,7 +166,12 @@ $(function() {
     //toggle resources sub-sections
     $('#toc .level-2').hide();
     $('#toc #nav_resources a:first').click(function() {
-        $('#toc .level-2').toggle();
+        $('#toc #nav_resources .level-2').toggle();
+        navBottom = nav.getBoundingClientRect().bottom + dy;
+    });
+
+    $('#toc #nav_quickstart a:first').click(function() {
+        $('#toc #nav_quickstart .level-2').toggle();
         navBottom = nav.getBoundingClientRect().bottom + dy;
     });
 
@@ -181,4 +185,14 @@ $(function() {
             $('.sub-header, #api-docs-header, #toc').removeClass('fixed-scroll');
         }
     });
+
+     $('#nav_quickstart a').click(function() {
+
+     });
+
+    var toggleExpandCollapse = function(divControlName, spanControlName ){
+        alert();
+    }
+
+    
 });
