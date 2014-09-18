@@ -291,12 +291,12 @@ span{
     padding: 0;
 }
 .api-docs #document-area #api-docs-content .main #quickstart .level-2 header {
-
     margin: 8px 0 27px 50px;
-    
 }
 
-
+.api-docs #document-area #api-docs-content .main #quickstart .level-3 header {
+    cursor: pointer; 
+}
 .api-docs #document-area #api-docs-content .main .level-2 .title {
     font-size: 15px;
     font-weight: bold;

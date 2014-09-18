@@ -175,6 +175,10 @@ $(function() {
         navBottom = nav.getBoundingClientRect().bottom + dy;
     });
 
+    $('.collapse-scenario').click(function() {
+        $('.collapse-scenario').siblings('.scenario-content').toggle();
+    });
+
     $(window).scroll(function() {
         if ($(window).scrollTop() > 69) {
             $('.sub-header, #api-docs-header, #toc').addClass('fixed-scroll');
