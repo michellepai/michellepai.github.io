@@ -297,6 +297,12 @@ span{
 .api-docs #document-area #api-docs-content .main #quickstart .level-3 header {
     cursor: pointer; 
 }
+.api-docs #document-area #api-docs-content .main #quickstart .scenario-content{
+    display: none; 
+}
+.api-docs #document-area #api-docs-content .main #quickstart .scenario-content.first-use-case{
+    display: block;
+}
 .api-docs #document-area #api-docs-content .main .level-2 .title {
     font-size: 15px;
     font-weight: bold;
@@ -616,7 +622,7 @@ api-docs #document-area #api-docs-content .main .level-2 .level-3 p {
     font: 1em "Droid Sans Mono",monospace!important;
     line-height: 1.5;
     margin: 0;
-    padding: 0;
+    padding: 0 10px;
     page-break-inside: avoid;
 }
 .modular-page section {
@@ -757,7 +763,7 @@ api-docs #document-area #api-docs-content .main .level-2 .level-3 p {
     background: #F5EAE0;
 }
 .api-docs #document-area #api-docs-content .main #quickstart .call-flow-container {
-    width: 60%;
+    width: 80%;
     padding: 20px;
     margin: 20px 20px 20px 50px;
     list-style-type: none;
@@ -835,7 +841,9 @@ api-docs #document-area #api-docs-content .main .level-2 .level-3 p {
     margin-top: -1px;
     margin-left: 3px;
 }
-
+.api-docs #document-area #api-docs-content .main #quickstart .italic {
+    font-style: italic;
+}
 /* All cf-sub-description font color*/
 .api-docs #document-area #api-docs-content .main #quickstart .call-flow-container .cf-sub-description.red-left p,
 .api-docs #document-area #api-docs-content .main #quickstart .call-flow-container .cf-sub-description.red-right p{
@@ -963,8 +971,8 @@ api-docs #document-area #api-docs-content .main .level-2 .level-3 p {
 }
 .api-docs #document-area #api-docs-content .main #quickstart .tabs{
     margin-left: 46px;
-    width: 75%;}
-
+    width: 83%;
+}
 .api-docs #document-area #api-docs-content .main #quickstart .tab-content{
     width:60%;
     height:240px;

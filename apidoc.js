@@ -176,8 +176,14 @@ $(function() {
     });
 
     $('.collapse-scenario').click(function() {
-        $('.collapse-scenario').siblings('.scenario-content').toggle();
+        $(this).next('.scenario-content').toggle();
     });
+
+    $('.collapse-scenario').hover(function(){
+    $(this).css("color","#009add");
+    },function(){
+    $(this).css("color","#333");
+  });
 
     $(window).scroll(function() {
         if ($(window).scrollTop() > 69) {

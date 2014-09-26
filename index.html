@@ -271,8 +271,9 @@
                 <li id="nav_quickstart"><a href="#quickstart">API Quick Start</a>
 
                     <ul class="level-2"  style="display: none;">
-                        <li id="nav_quickstart-send-message"><a href="#scenario-send-message">1. Send Message</a></li>
-                        <li id="nav_quickstart-manage-inbox"><a href="#quickstart-manage-inbox">2. Manage Inbox</a></li>
+                        <li id="nav_quickstart-send-message"><a href="#scenario-send-message">1. Send A Message</a></li>
+                        <li id="nav_quickstart-manage-inbox"><a href="#scenario-retrieve-all-messages">2. Retrieve All Messages</a></li>
+                        <li id="nav_quickstart-manage-inbox"><a href="#scenario-receive-messages-using-websockets">3. Receive Messages Using Websockets</a></li>
                     </ul>
                 </li>
 
@@ -331,11 +332,8 @@
 <section id="introduction" class="level-1">
     <header>Introduction</header>
     <section id="introduction-overview" class="level-2">
-        <p>The In-App Messaging API sends and retrieves SMS and MMS messages on behalf of a customer after consent. The message is sent to the recipients using the customer's phone number as the sender address. A develoepr can build apps to send and manage messages from single application.</p>
-        <ul>
-            <li>Sending messages from your app: The Send Messages (text and images) to any mobile phone number, emails and shortcodes</li>
-            <li>Receiving messages in your app: Responses to the messages are able to be received by the user's mobile phone </li>
-        </ul>
+        <p>In-app messaging (IAM) allows developers to send, receive, update and delete messages (SMS and MMS) on behalf of their end user with their explicit consent. The developer application can also use an open (WebSockets / STOMP) or HTTP (WebHooks) commmunication channel to receive real-time communications. Messages can be sent to another phone number (cross carrier), short codes or even to an email address.</p>
+        
     </section>
 </section>
 
@@ -409,113 +407,86 @@
                 <li class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="curl" aria-labelledby="ui-id-69" aria-selected="true">
                     <a href="#curl" class="selected ui-tabs-anchor" role="presentation" tabindex="-1" id="no-responsive-tag-quickstart_1_Ruby ui-id-69"><abbr>cURL</abbr></a>
                 </li>
-                <li class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="csharp" aria-labelledby="ui-id-69" aria-selected="false">
-                    <a href="#csharp" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="no-responsive-tag-quickstart_1_Ruby ui-id-69"><abbr>C#</abbr></a>
+                <li class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="java" aria-labelledby="ui-id-69" aria-selected="false">
+                    <a href="#java" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="no-responsive-tag-quickstart_1_Ruby ui-id-69"><abbr>Java</abbr></a>
                 </li>
             </ul>
             <div class="tab_content">
                 <div id="curl" class="code ui-tabs-panel ui-widget-content ui-corner-bottom" aria-labelledby="ui-id-69" role="tabpanel" aria-expanded="true" aria-hidden="false">
                     <section id="curl">
-<pre class="codeElement">
-<span class="Comment"># Step 1 : Request subscriber authorization : Get end user authorization code (auth code)</span>
-<a href="https://api.att.com/oauth/authorize?">https://api.att.com/oauth/authorize?</a><span class="Identifier">client_id</span>=<span class="Special">{</span>APP_KEY<span class="Special">}</span>&amp;<span class="Identifier">scope</span>=MIM,IMMN
-&amp;<span class="Identifier">redirect_uri</span>=<span class="Special">{</span>REDIRECT_URI<span class="Special">}</span>
+                        <pre class="codeElement">
+<span class="Comment">#!/bin/sh</span>
+
+<span class="Comment"># Obtain these from your API Matrix account</span>
+<span class="Identifier">APP_KEY</span>=<span class="Statement">&quot;&quot;</span>
+<span class="Identifier">APP_SECRET</span>=<span class="Statement">&quot;&quot;</span>
+
+<span class="Comment"># Setup the scopes for requesting access </span>
+<span class="Identifier">SCOPE</span>=<span class="Statement">&quot;</span><span class="String">IMMN,MIM</span><span class="Statement">&quot;</span>
+
+<span class="Comment"># Setup the redirect url for consent flow.</span>
+<span class="Comment"># Note that this must be escaped</span>
+<span class="Identifier">REDIRECT_URI</span>=<span class="Statement">&quot;</span><span class="String">http://localhost</span><span class="Statement">&quot;</span>
+
+<span class="Comment"># Step 1 : Request subscriber authorization : Get end user authorization code</span>
+<span class="Statement">echo</span><span class="String"> </span><span class="Statement">&quot;</span><span class="String"><a href="https://api.att.com/oauth/v4/authorize?client_id=">https://api.att.com/oauth/v4/authorize?client_id=</a></span><span class="PreProc">${</span><span class="PreProc">APP_KEY</span><span class="PreProc">}</span><span class="String">&amp;scope=</span><span class="PreProc">${</span><span class="PreProc">SCOPE</span><span class="PreProc">}</span><span class="String">&amp;redirect_uri=</span><span class="PreProc">${</span><span class="PreProc">REDIRECT_URI</span><span class="PreProc">}</span><span class="Statement">&quot;</span>
+
+<span class="Comment"># Input the obtained authorization code obtained from consent.</span>
+<span class="Identifier">OAUTH_AUTHORIZATION_CODE</span>=<span class="Statement">&quot;</span><span class="String">ENTER_VALUE</span><span class="Statement">&quot;</span>
+
+<span class="Comment"># Setup the payload</span>
+<span class="Identifier">DATA</span>=<span class="Statement">&quot;</span><span class="String">grant_type=authorization_code&amp;client_id=</span><span class="PreProc">${</span><span class="PreProc">APP_KEY</span><span class="PreProc">}</span><span class="String">&amp;client_secret=</span><span class="PreProc">${</span><span class="PreProc">APP_SECRET</span><span class="PreProc">}</span><span class="String">&amp;code=</span><span class="PreProc">${</span><span class="PreProc">OAUTH_AUTHORIZATION_CODE</span><span class="PreProc">}</span><span class="Statement">&quot;</span>
 
 <span class="Comment"># 2: Exchange code to get access token : Get AccessToken based on oauthorization code</span>
-curl &quot;<span class="Constant"><a href="https://api.att.com/oauth/token">https://api.att.com/oauth/token</a></span>&quot; \
---insecure \
---header &quot;<span class="Constant">Content-Type: application/x-www-form-urlencoded</span>&quot; \
---header &quot;<span class="Constant">Accept: application/json</span>&quot; \
---data &quot;<span class="Constant">grant_type=authorization_code&amp;client_id={APP_KEY}&amp;client_secret={APP_SECRET}&amp;code={OAUTH_AUTHORIZATION_CODE}</span>&quot;
-</pre>
-              </section>                    
+curl <span class="Statement">&quot;</span><span class="String"><a href="https://api.att.com/oauth/v4/token">https://api.att.com/oauth/v4/token</a></span><span class="Statement">&quot;</span> <span class="Statement">\</span>
+    <span class="Special">--insecure</span> <span class="Statement">\</span>
+    <span class="Special">--header</span> <span class="Statement">&quot;</span><span class="String">Content-Type: application/x-www-form-urlencoded</span><span class="Statement">&quot;</span> <span class="Statement">\</span>
+    <span class="Special">--header</span> <span class="Statement">&quot;</span><span class="String">Accept: application/json</span><span class="Statement">&quot;</span> <span class="Statement">\</span>
+    <span class="Special">--data</span> <span class="PreProc">${</span><span class="PreProc">DATA</span><span class="PreProc">}</span>
+                        </pre>
+                    </section>                    
                 </div>
-                <div id="csharp" class="code ui-tabs-panel ui-widget-content ui-corner-bottom" aria-labelledby="ui-id-69" role="tabpanel" aria-expanded="true" aria-hidden="false">
-                    <section id="csharp">
+                <div id="java" class="code ui-tabs-panel ui-widget-content ui-corner-bottom" aria-labelledby="ui-id-69" role="tabpanel" aria-expanded="true" aria-hidden="false">
+                    <section id="java">
                         <pre class="codeElement">
-<span class="Comment">// Step 1 - Request Authentication : Code for OAuth - Get Access Token </span>
-<span class="Comment">// If there's no access token yet go through the consent flow. </span>
+<span class="Comment">// This scenario for the In-App Messaging API requires the Java code kit, which</span>
+<span class="Comment">// can be found at: <a href="https://github.com/attdevsupport/codekit-java">https://github.com/attdevsupport/codekit-java</a></span>
 
-<span class="Comment">// Enter the value from the 'App Key' field obtained at developer.att.com in your </span>
-<span class="Comment">// app account.</span>
-<span class="Type">string</span> apiKey = <span class="Constant">&quot;&quot;</span>;
+<span class="PreProc">import</span> com.att.api.oauth.OAuthService;
+<span class="PreProc">import</span> com.att.api.oauth.OAuthToken;
 
-<span class="Comment">// Enter the value from the 'App Secret' field obtained at developer.att.com </span>
-<span class="Comment">// in your app account.</span>
-<span class="Type">string</span> secretKey = <span class="Constant">&quot;&quot;</span>;
+<span class="Type">public</span> <span class="Type">class</span> OAuthAuthCode {
+    <span class="Type">public</span> <span class="Type">static</span> <span class="Type">void</span> main(String[] args) {
+        <span class="Comment">// Enter the value from the 'App Key' field obtained at developer.att.com </span>
+        <span class="Comment">// in your app account.</span>
+        <span class="Type">final</span> String clientId = <span class="String">&quot;ENTER VALUE!&quot;</span>;
 
-<span class="Comment">// Set the fully-qualified domain name to: <a href="https://api.att.com">https://api.att.com</a></span>
-<span class="Type">string</span> endPoint = <span class="Constant">&quot;<a href="https://api.att.com">https://api.att.com</a>&quot;</span>;
+        <span class="Comment">// Enter the value from the 'App Secret' field obtained at developer.att.com </span>
+        <span class="Comment">// in your app account.</span>
+        <span class="Type">final</span> String clientSecret = <span class="String">&quot;ENTER VALUE!&quot;</span>;
 
-<span class="Comment">// Set the redirect URI for returning after consent flow.</span>
-<span class="Type">string</span> authorizeRedirectUri = <span class="Constant">&quot;&quot;</span>;
+        <span class="Comment">// Setup the scopes for requesting access </span>
+        <span class="Type">final</span> String scope = <span class="String">&quot;IMMN,MIM&quot;</span>;
 
-<span class="Comment">//Set the scope to MIM,IMMN</span>
-<span class="Type">string</span> scope = <span class="Constant">&quot;MIM,IMMN&quot;</span>;
+        <span class="Comment">// Setup the redirect url for consent flow.</span>
+        <span class="Comment">// Note that this must be escaped</span>
+        <span class="Type">final</span> String redirectUri = <span class="String">&quot;http://localhost&quot;</span>;
 
+        <span class="Comment">// Step 1: Request subscriber authorization : Get end user authorization code</span>
+        <span class="Type">final</span> String consent = <span class="String">&quot;<a href="https://api.att.com/oauth/v4/authorize?client_id=">https://api.att.com/oauth/v4/authorize?client_id=</a>&quot;</span>
+            + clientId + <span class="String">&quot;&amp;scope=&quot;</span> + scope + <span class="String">&quot;&amp;redirect_uri=&quot;</span> + redirectUri;
 
-<span class="Statement">if</span> (Request[<span class="Constant">&quot;code&quot;</span>] == <span class="Constant">null</span>)
-{
-    <span class="Comment">// Authenticate the user. Note: This requires a Web browser.</span>
-    <span class="Comment">// Obtain the url string that is used for consent flow.</span>
-    <span class="Type">string</span> url = endPoint + <span class="Constant">&quot;/oauth/authorize?client_id=&quot;</span> + apiKey + <span class="Constant">&quot;&amp;scope=&quot;</span> + scope + <span class="Constant">&quot;&amp;redirect_uri=&quot;</span> + authorizeRedirectUri;
-    Response.Redirect(url);
-}
-<span class="Statement">else</span>
-{
-    <span class="Comment">// Get code in the query parameters after doing consent flow</span>
-    authCode = Request[<span class="Constant">&quot;code&quot;</span>].ToString();
-    var query = HttpUtility.ParseQueryString(String.Empty);
+        System.out.println(<span class="String">&quot;Please authenticate using the following url: &quot;</span> + consent);
 
-    <span class="Type">string</span> oauthParameters = String.Empty;
+        <span class="Type">final</span> String authCode = <span class="String">&quot;ENTER_VALUE&quot;</span>;
+        <span class="Comment">// Create a service for requesting an OAuth access token.</span>
+        OAuthService osrvc = <span class="Statement">new</span> OAuthService(<span class="String">&quot;<a href="https://api.att.com">https://api.att.com</a>&quot;</span>, clientId, clientSecret);
 
-    query[<span class="Constant">&quot;grant_type&quot;</span>] = <span class="Constant">&quot;authorization_code&quot;</span>;
-    query[<span class="Constant">&quot;client_id&quot;</span>] = apiKey;
-    query[<span class="Constant">&quot;client_secret&quot;</span>] = secretKey;
-    query[<span class="Constant">&quot;code&quot;</span>] = authCode;
-
-    oauthParameters = query.ToString();
-
-    <span class="Statement">if</span> (!String.IsNullOrEmpty(oauthParameters))
-    {
-        <span class="Statement">try</span>
-        {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(endPoint + <span class="Constant">&quot;/oauth/token&quot;</span>);
-
-            request.Accept = <span class="Constant">&quot;application/json&quot;</span>;
-            request.Method = <span class="Constant">&quot;POST&quot;</span>;
-            request.ContentType = <span class="Constant">&quot;application/x-www-form-urlencoded&quot;</span>;
-
-            UTF8Encoding encoding = <span class="Statement">new</span> UTF8Encoding();
-            <span class="Type">byte</span>[] binaryData = encoding.GetBytes(oauthParameters);
-
-            request.ContentLength = binaryData.Length;
-            Stream dataStream;
-            dataStream = request.GetRequestStream();
-            dataStream.Write(binaryData, <span class="Constant">0</span>, binaryData.Length);
-            dataStream.Close();
-
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-            <span class="Type">string</span> accessTokenResponse;
-            <span class="Statement">using</span> (StreamReader streamReader = <span class="Statement">new</span> StreamReader(response.GetResponseStream()))
-            {
-                accessTokenResponse = streamReader.ReadToEnd();
-                streamReader.Close();
-            }
-
-            var serializer = <span class="Statement">new</span> JavaScriptSerializer();
-            var accessToken = serializer.Deserialize&lt;AccessToken&gt;(accessTokenResponse);
-            <span class="Statement">return</span> accessToken.access_token;
-
-        }
-        <span class="Statement">catch</span> (Exception ex)
-        {
-            <span class="Type">string</span> error = ex.Message;
-        }
+        <span class="Comment">// Step 2: Obtain the token using the authorization code</span>
+        OAuthToken token = osrvc.getTokenUsingCode(authCode);
+        System.out.println(<span class="String">&quot;Access token: &quot;</span> + token.getAccessToken());
     }
-}
-</pre>
+}                       </pre>
                     </section>                    
                 </div>
             </div>
@@ -526,8 +497,8 @@ curl &quot;<span class="Constant"><a href="https://api.att.com/oauth/token">http
         <img align="left" src="images/imgLrnCntrNum3.gif" style="padding-right: 10px" width="30px" height="30px">
         <header>Make API Calls</header>
         <section id="scenario-send-message" class="level-3">
-            <header class="collapse-scenario">Send a Message</header>
-            <div class="scenario-content">
+            <header class="collapse-scenario">Use Case 1: Send a Message</header>
+            <div class="scenario-content first-use-case">
                 <div class="call-flow-container">
                     <div class="img-table">
                         <div class="cf-row-img">       
@@ -574,102 +545,372 @@ curl &quot;<span class="Constant"><a href="https://api.att.com/oauth/token">http
                         <li class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="curl" aria-labelledby="ui-id-69" aria-selected="true">
                             <a href="#curl" class="selected ui-tabs-anchor" role="presentation" tabindex="-1" id="no-responsive-tag-quickstart_1_Ruby ui-id-69"><abbr>cURL</abbr></a>
                         </li>
-                        <li class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="csharp" aria-labelledby="ui-id-69" aria-selected="false">
-                            <a href="#csharp" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="no-responsive-tag-quickstart_1_Ruby ui-id-69"><abbr>C#</abbr></a>
+                        <li class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="java" aria-labelledby="ui-id-69" aria-selected="false">
+                            <a href="#java" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="no-responsive-tag-quickstart_1_Ruby ui-id-69"><abbr>Java</abbr></a>
                         </li>
                     </ul>
                     <div class="tab_content">
                         <div id="curl" class="code ui-tabs-panel ui-widget-content ui-corner-bottom" aria-labelledby="ui-id-69" role="tabpanel" aria-expanded="true" aria-hidden="false">
                             <section id="curl">
                                 <pre class="codeElement">
-        <span class="Comment"># Step 1: Request Accesstoken : Refer OAuth section</span>
+<span class="Comment">#!/bin/sh</span>
 
-        <span class="Comment"># Step 2</span>: Request MessageInbox Status</span>
-        curl &quot;<span class="Constant"><a href="https://api.att.com/myMessages/v2/messages/index/info">https://api.att.com/myMessages/v2/messages/index/info</a></span>&quot; \
-        --header &quot;<span class="Constant">Authorization: Bearer {ACCESS_TOKEN}</span>&quot; \
-        --header &quot;<span class="Constant">Accept: application/json</span>&quot; \
-        --request GET
+<span class="Comment"># Enter the authentication code generated by consent flow here</span>
+<span class="Identifier">OAUTH_ACCESS_TOKEN</span>=<span class="Statement">&quot;</span><span class="String">ENTER_VALUE</span><span class="Statement">&quot;</span>
 
-        <span class="Comment"># Step 3: Send a message to any phone number, shortcode and emails</span>
-        curl &quot;<span class="Constant"><a href="https://api.att.com/rest/1/MyMessages">https://api.att.com/rest/1/MyMessages</a></span>&quot; \
-        --header &quot;<span class="Constant">Content-Type: application/json</span>&quot; \
-        --header &quot;<span class="Constant">Authorization: Bearer {ACCESS_TOKEN}}</span>&quot; \
-        --header &quot;<span class="Constant">Accept: application/json</span>&quot; \
-        --data $'<span class="Constant">{&quot;Addresses&quot;:[&quot;tel:1234567890&quot;],&quot;Text&quot;:&quot;IMMN Message&quot;,&quot;Subject&quot;:&quot;IMMN Subject&quot;}</span>' \
-        --request POST
-        </pre>
+<span class="Comment"># Telephone number to which the message is sent.</span>
+<span class="Identifier">TEL</span>=<span class="Statement">&quot;</span><span class="String">ENTER_VALUE</span><span class="Statement">&quot;</span>
+
+<span class="Comment"># Message text body.</span>
+<span class="Identifier">MESSAGE</span>=<span class="Statement">&quot;</span><span class="String">Message text</span><span class="Statement">&quot;</span>
+
+<span class="Comment"># Message text subject.</span>
+<span class="Identifier">SUBJECT</span>=<span class="Statement">&quot;</span><span class="String">Message Subject</span><span class="Statement">&quot;</span>
+
+<span class="Comment"># Format the body that will be sent via curl</span>
+<span class="Identifier">BODY</span>=<span class="SpecialChar">{</span><span class="Statement">&quot;</span><span class="String">Addresses</span><span class="Statement">&quot;</span>:<span class="Statement">[</span><span class="PreProc">${</span><span class="PreProc">TEL</span><span class="PreProc">}</span><span class="Statement">]</span>,<span class="Statement">&quot;</span><span class="String">Text</span><span class="Statement">&quot;</span>:<span class="Statement">&quot;</span><span class="PreProc">${</span><span class="PreProc">MESSAGE</span><span class="PreProc">}</span><span class="Statement">&quot;</span>,<span class="Statement">&quot;</span><span class="String">Subject</span><span class="Statement">&quot;</span>:<span class="Statement">&quot;</span><span class="PreProc">${</span><span class="PreProc">SUBJECT</span><span class="PreProc">}</span><span class="Statement">&quot;</span><span class="SpecialChar">}</span>
+
+<span class="Comment"># Step 2: Send a message using the API</span>
+curl <span class="Statement">&quot;</span><span class="String"><a href="https://api.att.com/myMessages/v2/messages">https://api.att.com/myMessages/v2/messages</a></span><span class="Statement">&quot;</span> <span class="Statement">\</span>
+    <span class="Special">--header</span> <span class="Statement">&quot;</span><span class="String">Content-Type: application/json</span><span class="Statement">&quot;</span> <span class="Statement">\</span>
+    <span class="Special">--header</span> <span class="Statement">&quot;</span><span class="String">Authorization: Bearer </span><span class="PreProc">${</span><span class="PreProc">OAUTH_ACCESS_TOKEN</span><span class="PreProc">}</span><span class="Statement">&quot;</span> <span class="Statement">\</span>
+    <span class="Special">--header</span> <span class="Statement">&quot;</span><span class="String">Accept: application/json</span><span class="Statement">&quot;</span> <span class="Statement">\</span>
+    <span class="Special">--data</span> <span class="Statement">&quot;</span><span class="PreProc">${</span><span class="PreProc">BODY</span><span class="PreProc">}</span><span class="Statement">&quot;</span> <span class="Statement">\</span>
+    <span class="Special">--request</span> POST
+</pre>
                             </section>                    
                         </div>
-                        <div id="csharp" class="code ui-tabs-panel ui-widget-content ui-corner-bottom" aria-labelledby="ui-id-69" role="tabpanel" aria-expanded="true" aria-hidden="false">
-                            <section id="csharp">
+                        <div id="java" class="code ui-tabs-panel ui-widget-content ui-corner-bottom" aria-labelledby="ui-id-69" role="tabpanel" aria-expanded="true" aria-hidden="false">
+                            <section id="java">
                                 <pre class="codeElement">
-        <span class="Comment">// Step 1 - Request AccessToken : Code for OAuth - Get Access Token click here </span>
+<span class="Comment">// This scenario for the In-App Messaging API requires the Java code kit, which</span>
+<span class="Comment">// can be found at: <a href="https://github.com/attdevsupport/codekit-java">https://github.com/attdevsupport/codekit-java</a></span>
 
-        <span class="Comment">// Step 2 - Request MessageInbox Status : Code to Validate Message Inbox Index </span>
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+<span class="PreProc">import</span> com.att.api.oauth.OAuthToken;
+<span class="PreProc">import</span> com.att.api.immn.service.IMMNService;
+<span class="PreProc">import</span> com.att.api.immn.service.SendResponse;
+<span class="PreProc">import</span> com.att.api.rest.RESTException;
 
-        request.Headers.Add(<span class="Constant">&quot;Authorization&quot;</span>, <span class="Constant">&quot;Bearer &quot;</span> + accessToken);
-        request.Accept = accept;
-        request.Method = <span class="Constant">&quot;GET&quot;</span>;
 
-        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+<span class="Type">public</span> <span class="Type">class</span> IAMScenarioOne {
+    <span class="Type">public</span> <span class="Type">static</span> <span class="Type">void</span> main(String[] args) {
 
-        <span class="Type">string</span> responseData;
-        <span class="Statement">using</span> (StreamReader streamReader = <span class="Statement">new</span> StreamReader(response.GetResponseStream()))
-        {
-            responseData = streamReader.ReadToEnd();
-            streamReader.Close();
+        <span class="Comment">// Step 1: Complete oauth and receive an access token </span>
+        <span class="Comment">// Enter the access token generated by oauth here</span>
+        <span class="Type">final</span> String oauthAccessToken = <span class="String">&quot;ENTER VALUE!&quot;</span>;
+
+        <span class="Comment">// Create the service for interacting with the In-App Messaging API.</span>
+        IMMNService immnService = <span class="Statement">new</span> IMMNService(<span class="String">&quot;<a href="http://api.att.com">http://api.att.com</a>&quot;</span>, token);
+
+        <span class="Comment">// Step 2: Send a message using the API</span>
+        <span class="Statement">try</span> {
+            <span class="Comment">// Enter the phone number to where the message is sent.</span>
+            <span class="Comment">// For example: final String phoneNumber = &quot;5555555555&quot;;</span>
+            <span class="Type">final</span> String phoneNumber = <span class="String">&quot;ENTER VALUE!&quot;</span>;
+            <span class="Type">final</span> String msg = <span class="String">&quot;This is an example message&quot;</span>;
+
+            <span class="Comment">// Send the request to send the message.</span>
+            SendResponse response = immnService.sendMessage(phoneNumber, msg);
+            System.out.println(<span class="String">&quot;The response id is: &quot;</span> + response.getId());
+        } <span class="Statement">catch</span> (RESTException re) {
+            <span class="Comment">// Handle exceptions here.</span>
+            re.printStackTrace();
         }
-        <span class="Comment">// parse responseData.</span>
-
-        <span class="Comment">/* Step 3 - Send Message : Code to Send Message to a mobile number */</span>
-        <span class="Comment">// Create an instance for JavaScriptSerializer.</span>
-        var serializer = <span class="Statement">new</span> JavaScriptSerializer();
-
-        <span class="Comment">// Send Message</span>
-        <span class="Comment">// Create send message object to be converted to JSON</span>
-        <span class="Type">string</span> address = <span class="Constant">&quot;tel:0000000000&quot;</span>; <span class="Comment">// e.g. tel:2060000000</span>
-        <span class="Type">string</span> text = <span class="Constant">&quot;Send message test&quot;</span>;
-
-        var addressesList = <span class="Statement">new</span> List&lt;<span class="Type">string</span>&gt;();
-        addressesList.Add(address);
-
-        var sendMsgObj = <span class="Statement">new</span> RootObject()
-        {
-            messageRequest = <span class="Statement">new</span> MessageRequest()
-            {
-                addresses = addressesList,
-                text = text
-            }
-        };
-
-        <span class="Comment">//Convert Message request object to JSON</span>
-        var sendMsgData = serializer.Serialize(sendMsgObj);
-
-        <span class="Type">string</span> uri = endPoint + <span class="Constant">&quot;/myMessages/v2/messages&quot;</span>;
-
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-
-        request.Headers.Add(<span class="Constant">&quot;Authorization&quot;</span>, <span class="Constant">&quot;Bearer &quot;</span> + accessToken);
-        request.Accept = <span class="Constant">&quot;application/json&quot;</span>;
-        request.Method = <span class="Constant">&quot;POST&quot;</span>;
-        request.ContentType = <span class="Constant">&quot;application/json&quot;</span>;
-
-        Stream dataStream;
-        dataStream = request.GetRequestStream();
-
-        UTF8Encoding encoding = <span class="Statement">new</span> UTF8Encoding();
-        <span class="Type">byte</span>[] binaryData = encoding.GetBytes(data);
-        dataStream.Write(binaryData, <span class="Constant">0</span>, binaryData.Length);
-        dataStream.Close();
-        <span class="Comment">// parse the response object - if required</span>
-        </pre>
+    }
+}
+                                </pre>
                             </section>                    
                         </div>
                     </div>
                 </div> <!-- code tab -->
             </div>
         </section><!-- level 3 -->
+        <section id="scenario-retrieve-all-messages" class="level-3">
+            <header class="collapse-scenario">Use Case 2: Retrieve All Messages</header>
+            <div class="scenario-content">
+                <p>
+                    This use case will retrieve all the messages from the user’s inbox. An index must exist before attempting to retrieve the messages. Index need to be created only once per inbox and may expire due to inactivity in the inbox.
+                    arameters offset is your starting position and limit the number of messages to retrieve in the get message list.
+                </p>               
+                <div class="call-flow-container" >
+                    <div class="img-table">
+                        <div class="cf-row-img">       
+                            <div class="cf-img cf-left">Subscriber</div>  
+                            <div class="cf-img cf-center">Developer-Hosted Server</div>  
+                            <div class="cf-img cf-right">AT&amp;T</div>                      
+                        </div>
+                    </div>
+                    <ul>
+                        <li class="full right-arrow">
+                            <div class="cf-description"><p>Request Access Token</p></div>
+                            <div class="arrow"></div>
+                            <div class="cf-sub-description red-left"><p>Step 1 begins</p></div>
+                        </li>
+                        <li class="right-half left-arrow">
+                            <div class="cf-description"><p>Return Access Token</p></div>
+                            <div class="arrow"></div>
+                            <div class="cf-sub-description green-right"><p>Response - HTTP 200 Ok</p></div>
+                        </li>                        
+                        <li class="right-half right-arrow">
+                            <div class="cf-description"><p>Get Index information</p></div>
+                            <div class="arrow"></div>
+                            <div class="cf-sub-description red-left"><p>Step 2 begins</p></div>
+                        </li>   
+                        <li class="right-half left-arrow">
+                            <div class="cf-description"><p>Successful response</p></div>
+                            <div class="arrow"></div>
+                            <div class="cf-sub-description green-right"><p>Response - HTTP 200 </p></div>
+                        </li>
+
+                        <li class="right-half right-arrow">
+                            <div class="cf-description"><p>POST Create Message Index</p></div>
+                            <div class="arrow"></div>
+                            <div class="cf-sub-description red-left"><p>Step 3 <span class="italic">Optional status not equals INITIALIZED</p></div>
+                        </li>   
+                        <li class="right-half left-arrow">
+                            <div class="cf-description"><p>Successful Response</p></div>
+                            <div class="arrow"></div>
+                            <div class="cf-sub-description green-right"><p>Response - HTTP 202 Acepted </p></div>
+                        </li>
+                        <li class="right-half right-arrow">
+                            <div class="cf-description"><p>GET Messages list</p></div>
+                            <div class="arrow"></div>
+                            <div class="cf-sub-description red-left"><p>Step 4 begins</p></div>
+                        </li>   
+                        <li class="right-half left-arrow">
+                            <div class="cf-description"><p>Successful Response</p></div>
+                            <div class="arrow"></div>
+                            <div class="cf-sub-description green-right"><p>Response - HTTP 200 OK </p></div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tabs ui-tabs ui-widget ui-widget-content ui-corner-all">
+                    <ul class="tab_nav ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist">
+                        <li class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="curl" aria-labelledby="ui-id-69" aria-selected="true">
+                            <a href="#curl" class="selected ui-tabs-anchor" role="presentation" tabindex="-1" id="no-responsive-tag-quickstart_1_Ruby ui-id-69"><abbr>cURL</abbr></a>
+                        </li>
+                        <li class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="java" aria-labelledby="ui-id-69" aria-selected="false">
+                            <a href="#java" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="no-responsive-tag-quickstart_1_Ruby ui-id-69"><abbr>Java</abbr></a>
+                        </li>
+                    </ul>
+                    <div class="tab_content">
+                        <div id="curl" class="code ui-tabs-panel ui-widget-content ui-corner-bottom" aria-labelledby="ui-id-69" role="tabpanel" aria-expanded="true" aria-hidden="false">
+                            <section id="curl">
+                                <pre class="codeElement">
+<span class="Comment">#!/bin/sh</span>
+
+<span class="Comment"># Enter the authentication code generated by consent flow here</span>
+<span class="Identifier">OAUTH_ACCESS_TOKEN</span>=<span class="Statement">&quot;</span><span class="String">ENTER_VALUE</span><span class="Statement">&quot;</span>
+
+<span class="Comment"># Enter a valid number (&lt;= 300) of messages to request</span>
+<span class="Identifier">MESSAGE_LIMIT</span>=<span class="Statement">&quot;</span><span class="String">100</span><span class="Statement">&quot;</span>
+
+<span class="Comment"># Step 2: Get a list of messages using the API</span>
+curl <span class="Statement">&quot;</span><span class="PreProc">${</span><span class="PreProc">FQDN</span><span class="PreProc">}</span><span class="String">/myMessages/v2/messages?limit=</span><span class="PreProc">${</span><span class="PreProc">MESSAGE_LIMIT</span><span class="PreProc">}</span><span class="Statement">&quot;</span> <span class="Statement">\</span>
+    <span class="Special">--header</span> <span class="Statement">&quot;</span><span class="String">Authorization: Bearer </span><span class="PreProc">${</span><span class="PreProc">OAUTH_ACCESS_TOKEN</span><span class="PreProc">}</span><span class="Statement">&quot;</span> <span class="Statement">\</span>
+    <span class="Special">--header</span> <span class="Statement">&quot;</span><span class="String">Accept: application/json</span><span class="Statement">&quot;</span> <span class="Statement">\</span>
+    <span class="Special">--request</span> GET
+                                </pre>
+                            </section>                    
+                        </div>
+                        <div id="java" class="code ui-tabs-panel ui-widget-content ui-corner-bottom" aria-labelledby="ui-id-69" role="tabpanel" aria-expanded="true" aria-hidden="false">
+                            <section id="java">
+                                <pre class="codeElement">
+<span class="Comment">// This scenario for the In-App Messaging API requires the Java code kit, which</span>
+<span class="Comment">// can be found at: <a href="https://github.com/attdevsupport/codekit-java">https://github.com/attdevsupport/codekit-java</a></span>
+
+<span class="PreProc">import</span> com.att.api.oauth.OAuthToken;
+<span class="PreProc">import</span> com.att.api.immn.service.IMMNService;
+<span class="PreProc">import</span> com.att.api.immn.service.MessageList;
+<span class="PreProc">import</span> com.att.api.rest.RESTException;
+
+
+<span class="Type">public</span> <span class="Type">class</span> IAMScenarioTwo {
+    <span class="Type">public</span> <span class="Type">static</span> <span class="Type">void</span> main(String[] args) {
+
+        <span class="Comment">// Step 1: Complete oauth and receive an access token </span>
+        <span class="Comment">// Enter the access token generated by oauth here</span>
+        <span class="Type">final</span> String oauthAccessToken = <span class="String">&quot;ENTER VALUE!&quot;</span>;
+
+        <span class="Comment">// Create the service for interacting with the In-App Messaging API.</span>
+        IMMNService immnService = <span class="Statement">new</span> IMMNService(<span class="String">&quot;<a href="http://api.att.com">http://api.att.com</a>&quot;</span>, token);
+
+        <span class="Comment">// Step 2: Send a request to the API to obtain a list of messages</span>
+        <span class="Statement">try</span> {
+            <span class="Comment">// Enter the message list limit.</span>
+            <span class="Type">final</span> <span class="Type">int</span> limit = <span class="Constant">100</span>; <span class="Comment">// ENTER VALUE!</span>
+
+            <span class="Comment">// Enter the message list offset.</span>
+            <span class="Type">final</span> <span class="Type">int</span> offset = <span class="Constant">0</span>; <span class="Comment">// ENTER VALUE!</span>
+
+            <span class="Comment">// Send the request for getting the message list.</span>
+            MessageList r = immnService.getMessageList(limit, offset);
+            System.out.println(<span class="String">&quot;message list total: &quot;</span> + r.getTotal());
+        } <span class="Statement">catch</span> (RESTException re) {
+            <span class="Comment">// Handle exceptions here.</span>
+            re.printStackTrace();
+        }
+    }
+}
+                                </pre>
+                            </section>                    
+                        </div>
+                    </div>
+                </div> <!-- code tab -->
+            </div>
+        </section><!-- level 3 -->   
+        <section id="scenario-receive-messages-using-websockets" class="level-3">
+            <header class="collapse-scenario">Use Case 3: Receive Messages Using Websockets</header>
+            <div class="scenario-content">  
+                <p>
+                    In this scenario we will initiate a connection directly from the web browser to AT&T gateway and AT&T gateway will automatically push the messages (both SMS and MMS) back to the client (web browser). The client needs to connect using the credentials obtained using the get notification connection details method. An index must exist in-order for the messages to be retrieved. Client should handle the mechanism
+                </p>             
+                <div class="call-flow-container" >
+                    <div class="img-table">
+                        <div class="cf-row-img">       
+                            <div class="cf-img cf-left">Subscriber</div>  
+                            <div class="cf-img cf-center">Developer-Hosted Server</div>  
+                            <div class="cf-img cf-right">AT&amp;T</div>                      
+                        </div>
+                    </div>
+                    <ul>
+                        <li class="full right-arrow">
+                            <div class="cf-description"><p>Request Access Token</p></div>
+                            <div class="arrow"></div>
+                            <div class="cf-sub-description red-left"><p>Step 1 begins</p></div>
+                        </li>
+                        <li class="right-half left-arrow">
+                            <div class="cf-description"><p>Return Access Token</p></div>
+                            <div class="arrow"></div>
+                            <div class="cf-sub-description green-right"><p>Response - HTTP 200 Ok</p></div>
+                        </li>
+                        <li class="right-half right-arrow">
+                            <div class="cf-description"><p>Request MessageInbox Status</p></div>
+                            <div class="arrow"></div>
+                            <div class="cf-sub-description red-left"><p>Step 2 begins</p></div>
+                        </li>   
+                        <li class="right-half left-arrow">
+                            <div class="cf-description"><p>Return MessageInbox Status</p></div>
+                            <div class="arrow"></div>
+                            <div class="cf-sub-description green-right"><p>Response - HTTP 204 </p></div>
+                        </li>
+
+                        <li class="right-half right-arrow">
+                            <div class="cf-description"><p>POST Create Message Index</p></div>
+                            <div class="arrow"></div>
+                            <div class="cf-sub-description red-left"><p>Step 3 Optional</p></div>
+                        </li>   
+                        <li class="right-half left-arrow">
+                            <div class="cf-description"><p>Successful Response</p></div>
+                            <div class="arrow"></div>
+                            <div class="cf-sub-description green-right"><p>Response - HTTP 202 Acepted </p></div>
+                        </li>
+
+                        <li class="right-half right-arrow">
+                            <div class="cf-description"><p>GET Notification Connection Info</p></div>
+                            <div class="arrow"></div>
+                            <div class="cf-sub-description red-left"><p>Step 4 begins</p></div>
+                        </li>   
+                        <li class="right-half left-arrow">
+                            <div class="cf-description"><p>Successful Response</p></div>
+                            <div class="arrow"></div>
+                            <div class="cf-sub-description green-right"><p>Response - HTTP 200 OK </p></div>
+                        </li>
+
+                        <li class="left-half left-arrow">
+                            <div class="cf-description"><p>Send Connection Notification</p></div>
+                            <div class="arrow"></div>
+                            <div class="cf-sub-description red-left"><p>Step 5 Optional</p></div>
+                        </li>
+
+                        <li class="full right-arrow">
+                            <div class="cf-description"><p>Connection using STOMP</p></div>
+                            <div class="arrow"></div>
+                            <div class="cf-sub-description red-left"><p>Step 6 begins</p></div>
+                        </li>
+                        <li class="full left-arrow">
+                            <div class="cf-description"><p>Push Messages to client </p></div>
+                            <div class="arrow"></div>
+                            
+                        </li>                           
+                    </ul>
+                   
+                </div>
+                <div class="tabs ui-tabs ui-widget ui-widget-content ui-corner-all">
+                    <ul class="tab_nav ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist">
+                        <li class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="curl" aria-labelledby="ui-id-69" aria-selected="true">
+                            <a href="#curl" class="selected ui-tabs-anchor" role="presentation" tabindex="-1" id="no-responsive-tag-quickstart_1_Ruby ui-id-69"><abbr>cURL</abbr></a>
+                        </li>
+                        <li class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="java" aria-labelledby="ui-id-69" aria-selected="false">
+                            <a href="#java" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="no-responsive-tag-quickstart_1_Ruby ui-id-69"><abbr>Java</abbr></a>
+                        </li>
+                    </ul>
+                    <div class="tab_content">
+                        <div id="curl" class="code ui-tabs-panel ui-widget-content ui-corner-bottom" aria-labelledby="ui-id-69" role="tabpanel" aria-expanded="true" aria-hidden="false">
+                            <section id="curl">
+                                <pre class="codeElement">
+<span class="Comment">#!/bin/sh</span>
+
+<span class="Comment"># Enter the authentication code generated by consent flow here</span>
+<span class="Identifier">OAUTH_ACCESS_TOKEN</span>=<span class="Statement">&quot;</span><span class="String">ENTER_VALUE</span><span class="Statement">&quot;</span>
+
+<span class="Comment"># Enter a valid number (&lt;= 300) of messages to request</span>
+<span class="Identifier">MESSAGE_LIMIT</span>=<span class="Statement">&quot;</span><span class="String">100</span><span class="Statement">&quot;</span>
+
+<span class="Comment"># Step 2: Get a list of messages using the API</span>
+curl <span class="Statement">&quot;</span><span class="PreProc">${</span><span class="PreProc">FQDN</span><span class="PreProc">}</span><span class="String">/myMessages/v2/messages?limit=</span><span class="PreProc">${</span><span class="PreProc">MESSAGE_LIMIT</span><span class="PreProc">}</span><span class="Statement">&quot;</span> <span class="Statement">\</span>
+    <span class="Special">--header</span> <span class="Statement">&quot;</span><span class="String">Authorization: Bearer </span><span class="PreProc">${</span><span class="PreProc">OAUTH_ACCESS_TOKEN</span><span class="PreProc">}</span><span class="Statement">&quot;</span> <span class="Statement">\</span>
+    <span class="Special">--header</span> <span class="Statement">&quot;</span><span class="String">Accept: application/json</span><span class="Statement">&quot;</span> <span class="Statement">\</span>
+    <span class="Special">--request</span> GET
+                                </pre>
+                            </section>                    
+                        </div>
+                        <div id="java" class="code ui-tabs-panel ui-widget-content ui-corner-bottom" aria-labelledby="ui-id-69" role="tabpanel" aria-expanded="true" aria-hidden="false">
+                            <section id="java">
+                                <pre class="codeElement">
+<span class="Comment">// This scenario for the In-App Messaging API requires the Java code kit, which</span>
+<span class="Comment">// can be found at: <a href="https://github.com/attdevsupport/codekit-java">https://github.com/attdevsupport/codekit-java</a></span>
+
+<span class="PreProc">import</span> com.att.api.oauth.OAuthToken;
+<span class="PreProc">import</span> com.att.api.immn.service.IMMNService;
+<span class="PreProc">import</span> com.att.api.immn.service.MessageList;
+<span class="PreProc">import</span> com.att.api.rest.RESTException;
+
+
+<span class="Type">public</span> <span class="Type">class</span> IAMScenarioTwo {
+    <span class="Type">public</span> <span class="Type">static</span> <span class="Type">void</span> main(String[] args) {
+
+        <span class="Comment">// Step 1: Complete oauth and receive an access token </span>
+        <span class="Comment">// Enter the access token generated by oauth here</span>
+        <span class="Type">final</span> String oauthAccessToken = <span class="String">&quot;ENTER VALUE!&quot;</span>;
+
+        <span class="Comment">// Create the service for interacting with the In-App Messaging API.</span>
+        IMMNService immnService = <span class="Statement">new</span> IMMNService(<span class="String">&quot;<a href="http://api.att.com">http://api.att.com</a>&quot;</span>, token);
+
+        <span class="Comment">// Step 2: Send a request to the API to obtain a list of messages</span>
+        <span class="Statement">try</span> {
+            <span class="Comment">// Enter the message list limit.</span>
+            <span class="Type">final</span> <span class="Type">int</span> limit = <span class="Constant">100</span>; <span class="Comment">// ENTER VALUE!</span>
+
+            <span class="Comment">// Enter the message list offset.</span>
+            <span class="Type">final</span> <span class="Type">int</span> offset = <span class="Constant">0</span>; <span class="Comment">// ENTER VALUE!</span>
+
+            <span class="Comment">// Send the request for getting the message list.</span>
+            MessageList r = immnService.getMessageList(limit, offset);
+            System.out.println(<span class="String">&quot;message list total: &quot;</span> + r.getTotal());
+        } <span class="Statement">catch</span> (RESTException re) {
+            <span class="Comment">// Handle exceptions here.</span>
+            re.printStackTrace();
+        }
+    }
+}
+                                </pre>
+                            </section>                    
+                        </div>
+                    </div>
+                </div> <!-- code tab -->
+            </div>
+        </section><!-- level 3 --> 
     </section><!-- level 2 -->
 </section><!-- level 1 -->
 
